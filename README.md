@@ -31,7 +31,9 @@ Student-Scores/
 ## Features
 
 - **Modular Design**: Clean separation of data processing, modeling, and visualization
-- **Multiple Models**: Supports Random Forest and Linear Regression
+- **Multiple Models**: Supports Random Forest, Linear Regression, and Polynomial Regression
+- **Comprehensive Model Comparison**: Automated comparison of multiple algorithms
+- **Regularization Support**: Ridge and Lasso regression for polynomial features
 - **Comprehensive Visualization**: Automated generation of performance plots
 - **Model Persistence**: Save and load trained models
 - **Easy-to-Use**: Single script execution for complete workflow
@@ -64,7 +66,19 @@ Run the complete workflow with a single command:
 python main.py
 ```
 
-This will:
+#### Comprehensive Model Comparison
+Compare Linear, Polynomial, and Random Forest models:
+```bash
+python model_comparison.py
+```
+
+#### Test Regularized Polynomial Regression
+Explore regularization techniques for polynomial features:
+```bash
+python test_regularized_polynomial.py
+```
+
+The main workflow will:
 - Load and preprocess the data
 - Generate data visualizations
 - Train multiple models
@@ -105,12 +119,20 @@ The dataset (`StudentPerformanceFactors.csv`) contains various factors that infl
 
 ## Model Performance
 
-The models achieve the following performance metrics:
+Comprehensive comparison of different algorithms:
 
-| Model | MAE | RMSE | R² Score |
-|-------|-----|------|----------|
-| Random Forest | ~1.08 | ~1.45 | ~0.67 |
-| Linear Regression | ~1.15 | ~1.52 | ~0.62 |
+| Model | MAE | RMSE | R² Score | Performance |
+|-------|-----|------|----------|-------------|
+| **Linear Regression** | 0.45 | 1.80 | **0.7699** | 🥇 Best |
+| Polynomial Regression (d=2) | 0.66 | 1.90 | 0.7445 | 🥈 Good |
+| Random Forest | 1.23 | 2.25 | 0.6415 | 🥉 Moderate |
+| Polynomial Regression (d=3) | 2.77 | 4.34 | -0.3296 | ❌ Overfitted |
+
+**Key Findings:**
+- Linear Regression achieves the best performance with R² = 0.7699
+- Higher-degree polynomial regression suffers from overfitting
+- Regularization (Ridge/Lasso) helps but doesn't surpass linear regression
+- The dataset appears to have predominantly linear relationships
 
 ## Visualizations
 
@@ -118,9 +140,14 @@ The project automatically generates several visualizations:
 
 - **Data Distribution**: Histogram and box plot of exam scores
 - **Correlation Matrix**: Heatmap showing feature relationships
-- **Model Performance**: Actual vs predicted scatter plots
-- **Residuals Analysis**: Error distribution and patterns
+- **Categorical Analysis**: Impact of categorical variables on performance
+- **Model Comparison**: Bar charts comparing all model metrics
+- **Actual vs Predicted**: Scatter plots for each model
+- **Residuals Analysis**: Error distribution and patterns for all models
+- **Performance Heatmap**: Normalized comparison matrix
 - **Feature Importance**: Most influential factors for predictions
+
+All visualizations are saved in the `outputs/images/` directory.
 
 ## Module Documentation
 
@@ -130,9 +157,10 @@ The project automatically generates several visualizations:
 - Provides data exploration utilities
 
 ### StudentPerformanceModel (`src/model.py`)
-- Implements Random Forest and Linear Regression models
+- Implements Random Forest, Linear Regression, and Polynomial Regression models
+- Supports regularization techniques (Ridge, Lasso) for polynomial features
 - Handles model training, evaluation, and persistence
-- Provides feature importance analysis
+- Provides feature importance analysis and comprehensive performance metrics
 
 ### Visualizer (`src/visualizer.py`)
 - Creates comprehensive data and model visualizations

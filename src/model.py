@@ -6,6 +6,7 @@ import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
 from sklearn.metrics import mean_absolute_error, r2_score, mean_squared_error
 from sklearn.compose import ColumnTransformer
 import joblib
@@ -66,6 +67,31 @@ class StudentPerformanceModel:
         self.model = LinearRegression()
         self.pipeline = Pipeline(steps=[
             ('preprocessor', self.preprocessor),
+            ('regressor', self.model)
+        ])
+        
+        return self.pipeline
+    
+    def create_polynomial_model(self, degree: int = 2, **kwargs) -> Pipeline:
+        """
+        Create a Polynomial Regression model pipeline.
+        
+        Args:
+            degree: Degree of polynomial features (default: 2)
+            **kwargs: Additional parameters for LinearRegression
+            
+        Returns:
+            Pipeline: Complete ML pipeline with polynomial features
+        """
+        lr_params = {
+            'fit_intercept': True
+        }
+        lr_params.update(kwargs)
+        
+        self.model = LinearRegression(**lr_params)
+        self.pipeline = Pipeline(steps=[
+            ('preprocessor', self.preprocessor),
+            ('polynomial_features', PolynomialFeatures(degree=degree, include_bias=False)),
             ('regressor', self.model)
         ])
         
@@ -166,6 +192,12 @@ class StudentPerformanceModel:
                 feature_names.extend(transformer.get_feature_names_out(features))
             else:
                 feature_names.extend(features)
+        
+        # Handle polynomial features if they exist in the pipeline
+        if hasattr(self.pipeline, 'named_steps') and 'polynomial_features' in self.pipeline.named_steps:
+            poly_transformer = self.pipeline.named_steps['polynomial_features']
+            if hasattr(poly_transformer, 'get_feature_names_out'):
+                feature_names = poly_transformer.get_feature_names_out(feature_names)
         
         return feature_names
     
